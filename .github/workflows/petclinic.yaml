@@ -97,7 +97,7 @@ jobs:
           gcloud components install kubectl
           
 
-      - name: login to kubernetes 
+      - name: login to kubernetes   
         run: |
           gcloud container clusters get-credentials autopilot-cluster-1 --region us-south1 --project totemic-alchemy-456609-h9
           kubectl get all
