@@ -23,5 +23,5 @@ jobs:
          java-version: '17'
      
      - name: building the application 
-       run: mvv clean package 
+       run: mvn clean package 
           
