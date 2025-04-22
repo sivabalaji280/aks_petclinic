@@ -63,7 +63,7 @@ jobs:
      - name: Build Docker image
        run: docker buildx build -t balaji36490/petclinic:latest --load .
 
-    #  - name: Push Docker image
-    #    run: docker push ${{ secrets.DOCKER_USERNAME }}/petclinic:latest
+     - name: Push Docker image
+       run: docker push balaji36490/petclinic:latest
       
           
