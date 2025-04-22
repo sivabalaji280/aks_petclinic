@@ -1,0 +1,53 @@
+node {
+    def workspace = pwd()
+    def mvnHome
+    def scannerHome
+
+    stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      git 'https://gitlab.com/akilagithub/spring-petclinic-devsecops.git'
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'MAVEN_HOME'
+	   scannerHome = tool 'SonarScanner'
+   }
+
+    stage('Application_Build') {
+        withEnv(["MVN_HOME=$mvnHome"]) {
+         if (isUnix()) {
+            sh '"$MVN_HOME/bin/mvn" -Dmaven.test.failure.ignore clean package'
+         } else {
+            bat(/"%MVN_HOME%\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+         }
+      }
+    }    
+    stage('Application_Dependency_Check') {
+        sh '/home/training/DevSecOps/dependency-check/bin/dependency-check.sh --project sppetclinic --scan ./ --disableYarnAudit'
+        
+    }
+    stage('Application_Unit_Test') {        
+        sh 'mvn compiler:testCompile surefire:test'
+        step([$class: 'JUnitResultArchiver', testResults: "**/surefire-reports/*.xml"])
+    }    
+    stage('Application_Code_Analysis') {        
+        withSonarQubeEnv {
+           withSonarQubeEnv("SonarCloud") {
+                     sh "${tool("SonarScanner")}/bin/sonar-scanner"
+                  }
+
+        }
+    }
+   
+    stage('Application_Deploy') {
+        sh 'cp $(pwd)/target/*.war /home/training/DevSecOps/apache-tomcat-9.0.41/webapps/'
+    }    
+    stage('Application_Dynamic_Security_Testing') {
+      sh '/home/training/DevSecOps/ZAP_2.10.0/zap.sh -cmd -quickurl http://localhost:8080/petclinic -quickprogress -quickout /home/training/DevSecOps/zapreportnew/reportout.xml'
+                         
+
+
+
+ 
+    }
+}
