@@ -2,7 +2,7 @@ FROM eclipse-temurin:17-jdk-jammy
 
 WORKDIR /app
 
-COPY target/petclinic.war app.war
+COPY artifact/petclinic.war app.war
 
 EXPOSE 8080
 
