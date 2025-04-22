@@ -64,6 +64,23 @@ jobs:
        run: docker buildx build -t balaji36490/petclinic:latest --load .
 
      - name: Push Docker image
-       run: docker push balaji36490/petclinic:latest
-      
+       run: |
+          docker push balaji36490/petclinic:latest
+          docker push balaji36490/petclinic:${{ github.run_number }}
+  
+  deploy:
+    name: deploying application 
+    needs: [build,docker_build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+         ref: master  
           
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: totemic-alchemy-456609-h9
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
