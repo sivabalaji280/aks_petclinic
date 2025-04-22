@@ -24,4 +24,9 @@ jobs:
      
      - name: building the application 
        run: mvn clean package -DskipTests
+
+     - name: seeing the listed files
+       run: |
+         pwd
+         ls -l
           
