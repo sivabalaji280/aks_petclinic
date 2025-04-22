@@ -1,4 +1,4 @@
-name: "building petclinic spring boot application and deploying on kubernenets "
+name: "building petclinic spring boot application and deploying on kubernenets"
 
 on: 
   push:
